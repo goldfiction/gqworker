@@ -1,0 +1,21 @@
+{
+  "name": "gqworker",
+  "version": "0.0.1",
+  "dependencies": {
+    "webworker-threads":"",
+    "cluster":"",
+    "is-running":""
+  },
+  "devDependencies":{
+    "coffee-script":"",
+    "express":"4.0.0"
+  },
+  "main":"./main.js",
+  "scripts":{
+    "test":"mocha --compilers coffee:coffee-script/register -t 100000"
+  },
+  "description":"This is a simple to use module warpper for both worker-threads and cluster",
+  "repository":"",
+  "license":"MIT",
+  "private":false
+}

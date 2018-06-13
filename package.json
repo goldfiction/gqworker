@@ -1,10 +1,11 @@
 {
   "name": "gqworker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "webworker-threads":"",
     "cluster":"",
-    "is-running":""
+    "is-running":"",
+    "async":""
   },
   "devDependencies":{
     "coffee-script":"",
@@ -15,7 +16,7 @@
     "test":"mocha --compilers coffee:coffee-script/register -t 100000"
   },
   "description":"This is a simple to use module warpper for both worker-threads and cluster",
-  "repository":"",
+  "repository":"https://github.com/goldfiction/gqworker.git",
   "license":"MIT",
   "private":false
 }

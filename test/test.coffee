@@ -1,5 +1,8 @@
 assert=require 'assert'
 lib=require './../main.js'
+log=require('util').log
+
+cluster={}
 
 it 'should be able to load',(done)->
   done()
@@ -8,7 +11,7 @@ it 'should be able to run as thread',(done)->
   func1="function method(o){return o.a+o.b}"
   o={a:3,b:5}
   lib.runAsThread func1,o,(e,r)->
-    console.log e+":"+r
+    #log e+":"+r
     assert e+":"+r=="null:8"
     done()
 
@@ -20,7 +23,7 @@ it 'should be able to run thread handler',(done)->
       b:5
   res=
     send:(code,text)->
-      console.log code+":"+text
+      #log code+":"+text
       assert code+":"+text=="200:8"
       done()
   lib.threadHandler handler,req,res
@@ -33,12 +36,16 @@ it 'should be able to run thread handler',(done)->
 #  o.method=handler1
 #  step(o)
 #  .then((o)->
-#    console.log o
+#    log o
 #    o.method=handler2
 #    o
 #  ).then(step).then (o)->
-#    console.log o
+#    log o
 #    done()
+
+#after (done)->
+#  cluster.shutDownServer(7)
+#  setTimeout done,5000
 
 it 'should be able to run forkCluster',(done)->
   payload=(o)->
@@ -46,10 +53,23 @@ it 'should be able to run forkCluster',(done)->
     app.all '/*', (req, res)->
       res.send('process ' + process.pid + ' says hello!').end()
     server = app.listen 8000,()->
-      console.log('Process ' + process.pid + ' is listening to all incoming requests')
-  lib.forkCluster payload,{doNotForkNew:true,numWorkers:4,checkMaster:true},(e,o)->
+      log('Process ' + process.pid + ' is listening to all incoming requests')
+  lib.forkCluster payload,{doNotForkNew:false,numWorkers:4,checkMaster:true},(e,o)->
     #setTimeout o.shutdown,1000
-    assert o.workers.length==4
-    setTimeout done,5000
+    cluster=o.cluster
+    assert cluster.getWorkers().length==4
+    #log o
+    setTimeout ()->
+      cluster.getWorkers()[0].send({cmd:"terminate"})
+      cluster.getWorkers()[1].send({cmd:"restart"})
+      setTimeout ()->
+        assert cluster.getWorkers().length==3
+        done()
+      ,3000
+    ,1000
 
-
+after (done)->
+  setTimeout done,1000
+  setTimeout ()->
+    cluster.shutDownServer(7)
+  ,100

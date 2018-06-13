@@ -51,9 +51,14 @@
     if (cluster.isMaster) {
       updateMasterPID = function() {
         return eachWorker(function(worker) {
-          return worker.send({
-            masterpid: process.pid
-          });
+          var e;
+          try {
+            return worker.send({
+              masterpid: process.pid
+            });
+          } catch (_error) {
+            e = _error;
+          }
         });
       };
       process.once('SIGQUIT', function() {
@@ -73,6 +78,8 @@
         return shutDownAllWorker('SIGQUIT');
       });
       cluster.on('death', function(worker) {
+        var exitCode;
+        exitCode = worker.process.exitCode;
         log('worker ' + worker.pid + ' died');
         if (!o.doNotForkNew) {
           log('worker ' + "(" + worker.process.pid + ') exited with code ' + exitCode + '. Restarting...');
@@ -159,7 +166,7 @@
             updateMasterPID();
           }
           return cb(e, o);
-        }, 500);
+        }, 3000);
       });
     } else {
       closeWorker = function(sig) {

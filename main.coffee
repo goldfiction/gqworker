@@ -36,8 +36,10 @@ forkCluster=(payload,o,cb)->
   if cluster.isMaster
     updateMasterPID=()->
       eachWorker (worker)->
-        worker.send
-          masterpid: process.pid
+        try
+          worker.send
+            masterpid: process.pid
+        catch e
 
     process.once 'SIGQUIT',()->
       log 'Received SIGQUIT'
@@ -52,6 +54,7 @@ forkCluster=(payload,o,cb)->
       log 'Received SIGUSR2'
       shutDownAllWorker 'SIGQUIT'
     cluster.on 'death',(worker)->
+      exitCode = worker.process.exitCode
       log 'worker ' + worker.pid + ' died'
       if !o.doNotForkNew
         log 'worker '+"(" + worker.process.pid + ') exited with code ' + exitCode + '. Restarting...'
@@ -120,7 +123,7 @@ forkCluster=(payload,o,cb)->
         if o.checkMaster
           updateMasterPID()
         cb e,o
-      ,500
+      ,3000
   else
     closeWorker=(sig)->
       sig=sig||0

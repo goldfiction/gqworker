@@ -47,29 +47,36 @@ it 'should be able to run thread handler',(done)->
 #  cluster.shutDownServer(7)
 #  setTimeout done,5000
 
+
 it 'should be able to run forkCluster',(done)->
   payload=(o)->
     app = require('express')()
     app.all '/*', (req, res)->
       res.send('process ' + process.pid + ' says hello!').end()
-    server = app.listen 8000,()->
+    server = app.listen 8010,()->
       log('Process ' + process.pid + ' is listening to all incoming requests')
   lib.forkCluster payload,{doNotForkNew:false,numWorkers:4,checkMaster:true},(e,o)->
+    if e
+      console.error e
     #setTimeout o.shutdown,1000
     cluster=o.cluster
-    assert cluster.getWorkers().length==4
-    #log o
-    setTimeout ()->
-      cluster.getWorkers()[0].send({cmd:"terminate"})
-      cluster.getWorkers()[1].send({cmd:"restart"})
+    if cluster.isMaster
       setTimeout ()->
-        assert cluster.getWorkers().length==3
-        done()
-      ,3000
-    ,1000
-
+        assert cluster.getWorkers().length==4
+        setTimeout ()->
+          cluster.getWorkers()[0].send({cmd:"terminate"})
+          cluster.getWorkers()[1].send({cmd:"restart"})
+          setTimeout ()->
+            assert cluster.getWorkers().length==3
+            setTimeout ()->
+                done()
+            ,1000
+          ,6000
+        ,1000
+      ,1000
+    
 after (done)->
-  setTimeout done,1000
   setTimeout ()->
-    cluster.shutDownServer(7)
-  ,100
+    done()
+  ,6000
+  cluster.shutDownServer(7)

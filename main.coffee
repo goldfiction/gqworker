@@ -87,7 +87,7 @@ forkCluster=(payload,o,cb)->
       setTimeout ()->
         log "Closing Master"
         log 'Exiting.'
-        process.exit(sig)
+        process.exit(0)
       ,100
 
     restartAllWorker=()->

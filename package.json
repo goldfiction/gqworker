@@ -1,6 +1,6 @@
 {
   "name": "gqworker",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "dependencies": {
     "webworker-threads": "",
     "cluster": "",
@@ -9,19 +9,22 @@
   },
   "devDependencies": {
     "coffee-script": "",
-    "express": "4.17.1"
+    "coffeescript": "",
+    "express": "4.17.1",
+    "mocha": "8.2.1"
   },
   "main": "./main.js",
   "scripts": {
-    "test": "mocha -t 20000 --require node_modules/coffee-script/register test/test.coffee"
+    "test": "mocha -t 20000 --require node_modules/coffee-script/register test/*.coffee"
   },
   "description": "This is a simple to use module warpper for both worker-threads and cluster",
   "repository": "https://github.com/goldfiction/gqworker.git",
   "license": "MIT",
   "private": false,
-  "versionHistory":{
-    "0.0.4":"fixed security alert related to depricated dependencies",
-    "0.0.2":"working",
-    "0.0.1":"init"
+  "versionHistory": {
+    "0.0.5":"added testing script dependencies",
+    "0.0.4": "fixed security alert related to depricated dependencies",
+    "0.0.2": "working",
+    "0.0.1": "init"
   }
 }

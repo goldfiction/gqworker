@@ -71,12 +71,12 @@ it 'should be able to run forkCluster',(done)->
             setTimeout ()->
                 done()
             ,1000
-          ,6000
+          ,2000
         ,1000
       ,1000
     
 after (done)->
   setTimeout ()->
     done()
-  ,6000
+  ,2000
   cluster.shutDownServer(7)

@@ -11,7 +11,7 @@
     "coffee-script": "",
     "coffeescript": "",
     "express": "4.17.1",
-    "mocha": "8.2.1"
+    "mocha": "10.1.0"
   },
   "main": "./main.js",
   "scripts": {
